@@ -1,0 +1,50 @@
+== Auctioneer
+The purpose of this library is to provide a social game framework for an auction model. 
+
+The basic concept here is that through the Auctioneer API you may instance auction houses.   You may submit generic ruby objects for auction.   You may query the auction house.   You may request expired auctions.   You may remove auctions and retrieve a duplicate of the original item. 
+
+An example may be found in examples folder.
+
+For a very basic example of the API:
+
+
+# set up where the data will be stored.
+Auctioneer.database_path = "/data/auction.db"
+
+# create the AH definition if it doesn't exist.  maybe in your application_controller.
+@auctions = Auctioneer::AH.first_or_new(:name=>:alliance)
+
+# You should create a callback for what to do when an auction expires (without winner).
+@auctions.after_expire do |ticket, item|
+  mail_item(item, :to=>ticket.owner)
+end
+
+# You should create a callback for what to do when an auction is completed with winner.
+@auctions.after_complete do |ticket, item|
+  mail_item(item, :to=>ticket.winner)
+  ticket.winner.transfer_coin(ticket.winning_bid, :to=>ticket.owner)
+end
+
+# later in app once you're placing an item you only need to select the correct AH.
+# argument 1 is any valid ruby object
+#   :owner may be a symbol, string, or integer.
+#   :for is the time until the auction expires. 
+#   :start is the minimum for the first bid placed.
+#   :buy_now is the "buy it now" price or "maximum bid".  This may be nil.
+
+@auctions.create_auction( "any ruby object", {:owner=>:Retnur, 
+                                              :for=>24.hours,  
+                                              :start=>25, 
+                                              :buy_now=>100})
+
+# examples of querying for auctions.
+@auctions.query "all"
+@auctions.query "all.sword"  # all auctions that match for "sword"
+@auctions.query "/sword/" # first auction that matches the regular expression.
+@auctions.query "x2.black.sword"  # first two auctions that match black and then match sword.
+@auctions.query "#10"  # auction with ID ticket of 10
+@auctions.query "#10 and #25"  # auctions with ID ticket 10 and 25
+
+# To render all auctions (via rails partial syntax) you might do something like this:
+render :partial => 'auction', :collection => @auctions.query "all"
+
