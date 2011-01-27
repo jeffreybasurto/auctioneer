@@ -1,6 +1,7 @@
 puts "Auctioneer loaded."
 require 'dm-core'
 require 'dm-migrations'
+require 'yaml'
 
 module Auctioneer
   def self.database_path path
@@ -19,10 +20,37 @@ module Auctioneer
     property :name, String
 
     has n, :tickets
+
+    def find_auctions str
+      self.tickets.all
+    end
+
+    def create_auction obj, opts
+      self.tickets.create(:item=>obj)
+    end
   end
   # data for an individual auction.
   class Ticket
-    belongs_to :ah
+    include DataMapper::Resource
+    property :id, Serial
+
+    property :item, String
+    property :expiration, DateTime
+    property :buy_now, Integer
+
+    property :owner, Integer
+    property :winner, Integer
+    property :current_bid, Integer    
+
+    def item=(obj)
+      super YAML.dump(obj)
+    end
+
+    def item
+      puts "got #{super}"
+    end
+
+    belongs_to :house
   end
 
   DataMapper.finalize

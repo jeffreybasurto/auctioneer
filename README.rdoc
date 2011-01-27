@@ -21,7 +21,7 @@ You should create a callback for what to do when an auction expires (without win
 You should create a callback for what to do when an auction is completed with winner.
   @auctions.after_complete do |ticket, item|
     mail_item(item, :to=>ticket.winner)
-    ticket.winner.transfer_coin(ticket.winning_bid, :to=>ticket.owner)
+    ticket.winner.transfer_coin(ticket.current_bid, :to=>ticket.owner)
   end
 
 later in app once you're placing an item you only need to select the correct House.
@@ -32,7 +32,7 @@ argument 1 is any valid ruby object.
 :buy_now is the "buy it now" price or "maximum bid".  This may be nil.
 
   @auctions.create_auction( "any ruby object", {:owner=>:Retnur, 
-                                                  :for=>24.hours,  
+                                                  :for=>24,  
                                                   :start=>25, 
                                                   :buy_now=>100})
 
