@@ -1,5 +1,5 @@
-load '../lib/auctioneer.rb'
-
+# using bundler to test here.
+require 'auctioneer'
 class Item
   attr_accessor :name
   def initialize(name)

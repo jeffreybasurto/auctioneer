@@ -4,6 +4,7 @@ require 'dm-migrations'
 require 'yaml'
 
 module Auctioneer
+  require 'auctioneer/timers.rb'
   def self.database_path path
     puts "Using #{path} "
     @database_path = path 

@@ -1,0 +1,4 @@
+#!/usr/bin/env bash
+gem build auctioneer.gemspec
+sudo gem install auctioneer
+echo "Install complete"
