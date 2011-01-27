@@ -1,7 +1,7 @@
 == Auctioneer
 The purpose of this library is to provide a social game framework for an auction model.   The library should work for all ruby 1.8 and 1.9 compliant implementations.   Requires sqlite3 and datamapper gems installed.
 
-The basic concept here is that through the Auctioneer API you may instance auction houses.   You may submit generic ruby objects for auction.   You may query the auction house.   You may request expired auctions.   You may remove auctions and retrieve a duplicate of the original item. 
+The basic concept here is that through the Auctioneer API you may instance auction houses, and submit generic ruby objects for auction.   You may query the auction house with a variety of parameters for displaying to users with a partial.  Additionally,  registering callbacks for expiration and successful auctions is easy and low maintenance.
 
 An example may be found in examples folder.
 
@@ -24,25 +24,34 @@ You should create a callback for what to do when an auction is completed with wi
     ticket.winner.transfer_coin(ticket.current_bid, :to=>ticket.owner)
   end
 
-later in app once you're placing an item you only need to select the correct House.
-argument 1 is any valid ruby object. 
+The auction engine will automatically call these blocks once an auction expires or completes, or at the next available time.  Ideally you'd be able to "mail" results and items to the people they belong.  Whatever method your application demands can be used in the blocks themselves. Furthermore the internal database will maintain the definitions without need for sweep and mark.  
+
+
+Later in app once you're placing an item you only need to select the correct House. This may be done via web app forms or however appropriate for your needs as long as this code is used somewhere:
+argument 1 is any valid ruby object.   It'll serialize it automatically and eventually the item will be given back to the program flow.  This means relative primatives are accepted (like id numbers, strings, whatever) but also abstract data types like the actual model representing what is being auctioned.   It makes no distinction between items or other things.   For example, you could allow auctioning of items on your game, but additionally you may decide you want to allow auctioning of pets or real estate.   It will accept these without complaint. 
 :owner may be a symbol, string, or integer.
-:for is the time until the auction expires. 
+:expires is the time until the auction expires. 
 :start is the minimum for the first bid placed.
 :buy_now is the "buy it now" price or "maximum bid".  This may be nil.
-
-  @auctions.create_auction( "any ruby object", {:owner=>:Retnur, 
-                                                  :for=>24,  
-                                                  :start=>25, 
-                                                  :buy_now=>100})
+  @auctions.create_auction( Item.new("a steel sword"), {:owner=>"Retnur", 
+                                                        :expires=>24,  
+                                                        :start=>25, 
+                                                        :buy_now=>100})
 
 examples of querying for auctions.
   @auctions.all # find all auctions
   @auctions.all(:name=>"sword")  # all auctions that match for "sword"
   @auctions.all(:name.like=>"%black%").all(:name.like=>"%sword%")[0..1]  # first two auctions whose name contains black and then sword.
   @auctions.all(:id=>10)  # auction with ID ticket of 10
-  @auctions.all(:id=>10) + @auctions.all(:id=>10)  # auctions with ID ticket 10 and 25
+  @auctions.all(:id=>10) + @auctions.all(:id=>25) - @auctions.expired  # unexpired auctions with ID ticket 10 and 25
+
 
 To render all auctions (via rails partial syntax) you might do something like this:
-  render :partial => 'auction', :collection => @auctions.all
+  render :partial => 'ticket', :collection => @auctions.all
+
+Given the following template:
+  Auction for #<%= ticket.id %>: <%= link_to "buy now", bid_path(:amount => ticket.buy_now)%> 
+
+It would produce a page with the query results (@auctions.all) displaying information on each ticket and putting a link to buy it now.
+
 
