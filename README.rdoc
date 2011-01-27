@@ -37,13 +37,12 @@ argument 1 is any valid ruby object.
                                                   :buy_now=>100})
 
 examples of querying for auctions.
-  @auctions.find "all"
-  @auctions.find "all.sword"  # all auctions that match for "sword"
-  @auctions.find "/sword/" # first auction that matches the regular expression.
-  @auctions.find "x2.black.sword"  # first two auctions that match black and then match sword.
-  @auctions.find "#10"  # auction with ID ticket of 10
-  @auctions.find "#10 and #25"  # auctions with ID ticket 10 and 25
+  @auctions.all # find all auctions
+  @auctions.all(:name=>"sword")  # all auctions that match for "sword"
+  @auctions.all(:name.like=>"%black%").all(:name.like=>"%sword%")[0..1]  # first two auctions whose name contains black and then sword.
+  @auctions.all(:id=>10)  # auction with ID ticket of 10
+  @auctions.all(:id=>10) + @auctions.all(:id=>10)  # auctions with ID ticket 10 and 25
 
 To render all auctions (via rails partial syntax) you might do something like this:
-  render :partial => 'auction', :collection => @auctions.find "all"
+  render :partial => 'auction', :collection => @auctions.all
 

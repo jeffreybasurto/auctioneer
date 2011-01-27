@@ -21,15 +21,23 @@ module Auctioneer
 
     has n, :tickets
 
-    def find opts
+    def after_expire &blk
+      @after_expire = blk
+    end
+
+    def after_complete &blk
+      @after_complete = blk
+    end
+
+    def all opts
       self.tickets.all(opts)
     end
 
-    def create_auction obj, opts
-      
+    def create_auction obj, opts      
       self.tickets.create(opts.merge({:item=>obj}))
     end
   end
+
   # data for an individual auction.
   class Ticket
     include DataMapper::Resource
