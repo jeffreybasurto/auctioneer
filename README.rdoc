@@ -26,16 +26,16 @@ You should create a callback for what to do when an auction is completed with wi
   end
 
 later in app once you're placing an item you only need to select the correct AH.
-argument 1 is any valid ruby object
-* :owner may be a symbol, string, or integer.
-* :for is the time until the auction expires. 
-* :start is the minimum for the first bid placed.
-* :buy_now is the "buy it now" price or "maximum bid".  This may be nil.
+argument 1 is any valid ruby object. 
+:owner may be a symbol, string, or integer.
+:for is the time until the auction expires. 
+:start is the minimum for the first bid placed.
+:buy_now is the "buy it now" price or "maximum bid".  This may be nil.
 
   @auctions.create_auction( "any ruby object", {:owner=>:Retnur, 
-                                                :for=>24.hours,  
-                                                :start=>25, 
-                                                :buy_now=>100})
+                                                  :for=>24.hours,  
+                                                  :start=>25, 
+                                                  :buy_now=>100})
 
 examples of querying for auctions.
   @auctions.query "all"
