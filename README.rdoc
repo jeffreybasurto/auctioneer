@@ -1,5 +1,5 @@
 == Auctioneer
-The purpose of this library is to provide a social game framework for an auction model. 
+The purpose of this library is to provide a social game framework for an auction model.   The library should work for all ruby 1.8 and 1.9 compliant implementations.   Requires sqlite3 and datamapper gems installed.
 
 The basic concept here is that through the Auctioneer API you may instance auction houses.   You may submit generic ruby objects for auction.   You may query the auction house.   You may request expired auctions.   You may remove auctions and retrieve a duplicate of the original item. 
 
@@ -7,9 +7,8 @@ An example may be found in examples folder.
 
 For a very basic example of the API:
 
-
-set up where the data will be stored.
-  Auctioneer.database_path = "/data/auction.db"
+set up where the auction houses will be stored for your project.
+  Auctioneer.database_path = "/path/to/auction.db"
 
 create the AH definition if it doesn't exist.  maybe in your application_controller.
   @auctions = Auctioneer::AH.first_or_new(:name=>:alliance)
