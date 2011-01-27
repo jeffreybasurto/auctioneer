@@ -12,11 +12,17 @@ module Auctioneer
     DataMapper.auto_upgrade!
   end
 
-  class AH
+  class House
     include DataMapper::Resource
 
     property :id, Serial
     property :name, String
+
+    has n, :tickets
+  end
+  # data for an individual auction.
+  class Ticket
+    belongs_to :ah
   end
 
   DataMapper.finalize

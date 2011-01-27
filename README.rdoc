@@ -10,8 +10,8 @@ For a very basic example of the API:
 set up where the auction houses will be stored for your project.
   Auctioneer.database_path = "/path/to/auction.db"
 
-create the AH definition if it doesn't exist.  maybe in your application_controller.
-  @auctions = Auctioneer::AH.first_or_new(:name=>:alliance)
+create the House definition if it doesn't exist.  maybe in your application_controller.
+  @auctions = Auctioneer::House.first_or_new(:name=>:alliance)
 
 You should create a callback for what to do when an auction expires (without winner).
   @auctions.after_expire do |ticket, item|
@@ -24,7 +24,7 @@ You should create a callback for what to do when an auction is completed with wi
     ticket.winner.transfer_coin(ticket.winning_bid, :to=>ticket.owner)
   end
 
-later in app once you're placing an item you only need to select the correct AH.
+later in app once you're placing an item you only need to select the correct House.
 argument 1 is any valid ruby object. 
 :owner may be a symbol, string, or integer.
 :for is the time until the auction expires. 
