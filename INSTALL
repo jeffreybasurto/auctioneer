@@ -1,0 +1,4 @@
+Auctioneer should be installed as a gem.
+
+To use the library once installed simply:
+require 'auctioneer'
