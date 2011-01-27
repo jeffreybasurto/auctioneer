@@ -21,12 +21,13 @@ module Auctioneer
 
     has n, :tickets
 
-    def find_auctions str
-      self.tickets.all
+    def find opts
+      self.tickets.all(opts)
     end
 
     def create_auction obj, opts
-      self.tickets.create(:item=>obj)
+      
+      self.tickets.create(opts.merge({:item=>obj}))
     end
   end
   # data for an individual auction.
@@ -38,17 +39,32 @@ module Auctioneer
     property :expiration, DateTime
     property :buy_now, Integer
 
-    property :owner, Integer
-    property :winner, Integer
-    property :current_bid, Integer    
+    property :owner, String
+    property :winner, String
+    property :current_bid, Integer
+
+    
+    def winner=(obj)
+      super YAML.dump(obj)
+    end
+    def winner
+      YAML.load(super) rescue nil
+    end
+    def owner=(obj)
+      super YAML.dump(obj)
+    end
+    def owner
+      YAML.load(super) rescue nil
+    end
 
     def item=(obj)
       super YAML.dump(obj)
     end
-
     def item
-      puts "got #{super}"
+      YAML.load(super) rescue nil
     end
+
+
 
     belongs_to :house
   end
