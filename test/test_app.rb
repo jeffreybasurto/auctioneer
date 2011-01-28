@@ -30,4 +30,4 @@ ah.create_auction(Item.new("red fedora"), {:owner=>"Jonathan", :expiration=>0})
 # query for all of Jefffrey Basurto's auctions that the current bid is at more than 60.
 ah.all({:owner=>"Jeffrey Basurto".to_yaml, :current_bid.gt=>60}).each {|t| puts "Item: #{t.item.name}  Owner: #{t.owner}" }
 
-ah.expired.each {|t| puts "Item: #{t.item.name}  Owner: #{t.owner}"}
+ah.sweep
