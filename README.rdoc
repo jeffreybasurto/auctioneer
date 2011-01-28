@@ -81,3 +81,8 @@ To place a bid you need to make the API call thusly.
   @auctions.bid(ticket_id, bidder, amount) 
 Generally ticket_id is available to the view through the partial rendering the options.   Once the bid is placed, if the bid meets the buy it now requirement it will make the completed callback and the item and transaction will happen.  If the auction remains the bid will stand until the auction expires.   The callback will then happen and the item and transaction of resources will occur depending on how you define it in the callback.
 
+=== Cancelling bids
+
+To cancel a bid you call Auctioneer::House#cancel_auction(ticket_id).
+  @auctions.cancel_auction(ticket_id)
+Again, ticket_id is typically available to the view through the partial rendering after a query.  
