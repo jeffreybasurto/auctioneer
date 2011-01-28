@@ -44,7 +44,7 @@ examples of querying for auctions.
   @auctions.all(:name.like=>"%black%").all(:name.like=>"%sword%")[0..1]  # first two auctions whose name contains black and then sword.
   @auctions.all(:id=>10)  # auction with ID ticket of 10
   @auctions.all(:id=>10) + @auctions.all(:id=>25) - @auctions.expired  # unexpired auctions with ID ticket 10 and 25
-
+  @auctions.all(:offset=>10) # limit only 10 results
 
 To render all auctions (via rails partial syntax) you might do something like this:
   render :partial => 'ticket', :collection => @auctions.all
@@ -54,4 +54,9 @@ Given the following template:
 
 It would produce a page with the query results (@auctions.all) displaying information on each ticket and putting a link to buy it now.
 
+To access all expired auctions:
+  @auctions.expired
+
+Additionally you may query through expired:
+  @auctions.expired(:owner=> "Retnur") # Only expired auctions by Retnur
 

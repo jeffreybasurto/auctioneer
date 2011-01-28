@@ -1,5 +1,7 @@
 # using bundler to test here.
+require 'rubygems'
 require 'auctioneer'
+
 class Item
   attr_accessor :name
   def initialize(name)
@@ -21,9 +23,11 @@ ah.after_complete do |ticket|
 end
 
 ah.tickets.destroy!
-ah.create_auction(Item.new("fancy bracelet"), {:owner=>"Jeffrey Basurto", :current_bid=>50})
-ah.create_auction(Item.new("crown"),  {:owner=>"Jeffrey Basurto", :current_bid=>70})
-ah.create_auction(Item.new("red fedora"), {:owner=>"Jonathan"})
+ah.create_auction(Item.new("fancy bracelet"), {:owner=>"Jeffrey Basurto", :current_bid=>50, :expiration=>24})
+ah.create_auction(Item.new("crown"),  {:owner=>"Jeffrey Basurto", :current_bid=>70, :expiration=>1})
+ah.create_auction(Item.new("red fedora"), {:owner=>"Jonathan", :expiration=>0})
 
 # query for all of Jefffrey Basurto's auctions that the current bid is at more than 60.
 ah.all({:owner=>"Jeffrey Basurto".to_yaml, :current_bid.gt=>60}).each {|t| puts "Item: #{t.item.name}  Owner: #{t.owner}" }
+
+ah.expired.each {|t| puts "Item: #{t.item.name}  Owner: #{t.owner}"}

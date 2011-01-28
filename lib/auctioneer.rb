@@ -22,6 +22,10 @@ module Auctioneer
 
     has n, :tickets
 
+    def expired
+      all({:expiration.lte => DateTime.now})
+    end
+
     def after_expire &blk
       @after_expire = blk
     end
@@ -35,6 +39,7 @@ module Auctioneer
     end
 
     def create_auction obj, opts      
+      opts[:expiration] = DateTime.now + opts[:expiration] / 24.0
       self.tickets.create(opts.merge({:item=>obj}))
     end
   end
@@ -72,8 +77,6 @@ module Auctioneer
     def item
       YAML.load(super) rescue nil
     end
-
-
 
     belongs_to :house
   end

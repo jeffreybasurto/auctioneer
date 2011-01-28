@@ -12,7 +12,7 @@ Gem::Specification.new do |s|
   
   s.summary = 'Provides a generic auction system.'
   s.description = 'Auctioneer provides an api to generically place auctions into .'
-  s.required_ruby_version = '~> 1.9.0'
+  s.required_ruby_version = '~> 1.8.0'
   
   s.files = Dir['lib/**/*']
 end
