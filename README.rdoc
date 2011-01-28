@@ -14,7 +14,7 @@ create the House definition if it doesn't exist.  maybe in your application_cont
   # Here is an auction house object with a store identified by :alliance
   @auctions = Auctioneer::House.first_or_create(:name=>:alliance)
   
-  # You may many other auction houses side by side and they will persist.
+  # You may have any number of auction houses side by side and they will persist.
   @horde_ah = Auctioneer::House.first_or_create(:name=>:horde)
   @neutral_ah = Auctioneer:House.first_or_create(:name=>:neutral)
 
