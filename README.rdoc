@@ -3,15 +3,25 @@ The purpose of this library is to provide a social game framework for an auction
 
 The basic concept here is that through the Auctioneer API you may instance auction houses, and submit generic ruby objects for auction.   You may query the auction house with a variety of parameters for displaying to users with a partial.  Additionally,  registering callbacks for expiration and successful auctions is easy and low maintenance.
 
-An example may be found in examples folder.
-
 For a very basic example of the API:
 
+=== Setting Up Your Auction house(s)
 set up where the auction houses will be stored for your project.
   Auctioneer.database_path = "/path/to/auction.db"
 
-create the House definition if it doesn't exist.  maybe in your application_controller.
-  @auctions = Auctioneer::House.first_or_new(:name=>:alliance)
+create the House definition if it doesn't exist.  maybe in your application_controller for rails.
+  # world of warcraft themed for an example.
+  # Here is an auction house object with a store identified by :alliance
+  @auctions = Auctioneer::House.first_or_create(:name=>:alliance)
+  
+  # You may many other auction houses side by side and they will persist.
+  @horde_ah = Auctioneer::House.first_or_create(:name=>:horde)
+  @neutral_ah = Auctioneer:House.first_or_create(:name=>:neutral)
+
+Most games will not need multiple auction house support, but it should be noted that it's *easy* to implement with this library.   You can give different factions their own AH, or AH's in different regions.   It's not a problem.
+
+
+=== Handling AH ticket expirations and competed auctions.
 
 You should create a callback for what to do when an auction expires (without winner).
   @auctions.after_expire do |ticket, item|
@@ -27,17 +37,19 @@ You should create a callback for what to do when an auction is completed with wi
 The auction engine will automatically call these blocks once an auction expires or completes, or at the next available time.  Ideally you'd be able to "mail" results and items to the people they belong.  Whatever method your application demands can be used in the blocks themselves. Furthermore the internal database will maintain the definitions without need for sweep and mark.  
 
 
+=== Creating an Auction
 Later in app once you're placing an item you only need to select the correct House. This may be done via web app forms or however appropriate for your needs as long as this code is used somewhere:
 argument 1 is any valid ruby object.   It'll serialize it automatically and eventually the item will be given back to the program flow.  This means relative primatives are accepted (like id numbers, strings, whatever) but also abstract data types like the actual model representing what is being auctioned.   It makes no distinction between items or other things.   For example, you could allow auctioning of items on your game, but additionally you may decide you want to allow auctioning of pets or real estate.   It will accept these without complaint. 
 :owner may be a symbol, string, or integer.
 :expires is the time until the auction expires. 
 :start is the minimum for the first bid placed.
 :buy_now is the "buy it now" price or "maximum bid".  This may be nil.
-  @auctions.create_auction( Item.new("a steel sword"), {:owner=>"Retnur", 
-                                                        :expires=>24,  
-                                                        :start=>25, 
-                                                        :buy_now=>100})
+  @auctions.create_auction( Item.new("a steel sword"), {:owner=>"Retnur", # any valid identifier, it's serialized
+                                                        :expires=>24,     # hours
+                                                        :start=>25,       # initial bid required.
+                                                        :buy_now=>100})   # Buy it now price.
 
+=== Querying Auctionhouse stores for tickets.
 examples of querying for auctions.
   @auctions.all # find all auctions
   @auctions.all(:name=>"sword")  # all auctions that match for "sword"
@@ -46,6 +58,8 @@ examples of querying for auctions.
   @auctions.all(:id=>10) + @auctions.all(:id=>25) - @auctions.expired  # unexpired auctions with ID ticket 10 and 25
   @auctions.all(:offset=>10) # limit only 10 results
 
+
+=== Rendering auctions via Rails (similar in other frameworks)
 To render all auctions (via rails partial syntax) you might do something like this:
   render :partial => 'ticket', :collection => @auctions.all
 
@@ -54,9 +68,16 @@ Given the following template:
 
 It would produce a page with the query results (@auctions.all) displaying information on each ticket and putting a link to buy it now.
 
+=== Accessing Expired Auctions (if no callback was set to handle them, otherwise they'll be purged on callback)
 To access all expired auctions:
   @auctions.expired
 
 Additionally you may query through expired:
   @auctions.expired(:owner=> "Retnur") # Only expired auctions by Retnur
+
+=== Placing bids
+
+To place a bid you need to make the API call thusly.
+  @auctions.bid(ticket_id, bidder, amount) 
+Generally ticket_id is available to the view through the partial rendering the options.   Once the bid is placed, if the bid meets the buy it now requirement it will make the completed callback and the item and transaction will happen.  If the auction remains the bid will stand until the auction expires.   The callback will then happen and the item and transaction of resources will occur depending on how you define it in the callback.
 
