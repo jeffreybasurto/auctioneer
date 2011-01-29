@@ -13,7 +13,7 @@ module Auctioneer
       found = expired
       found.each do |ticket|
         @on_expire.call(ticket) if @on_expire && ticket.expired?
-        @on_complete.call(ticket) if @on_complete && ticket.completed?
+        @on_complete.call(ticket) if @on_complete && ticket.complete?
       end
       # one destroy statement for everything found.
       found.destroy!

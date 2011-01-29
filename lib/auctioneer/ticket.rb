@@ -24,7 +24,7 @@ module Auctioneer
     end
     # Is the ticket closed?
     def closed?
-      expiration.past?
+      expiration <= DateTime.now
     end
 
     def winner=(obj)
